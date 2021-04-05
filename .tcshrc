@@ -1,0 +1,38 @@
+setenv TERM screen-256color
+setenv CLICOLOR 1
+
+# alias
+alias ls 'ls -GFh'
+alias ll 'ls -l'
+alias tmr 'tmux attach 2>/dev/null || tmux'
+alias sr 'screen -RD'
+
+# promopt
+## Platform-dependent settings
+set uname=`uname`
+if ( $uname == "Linux" ) then
+  alias ls 'ls --color=auto'
+  set first_ip=`ip addr | sed -e '/127\.0\.0\.1/d' | awk '/inet .*/{print $2}' | sed 1q | awk -F/ '{print $1}'`
+else
+  setenv LS_COLORS "dxfxcxdxbxegedabagacad"
+  alias ls 'ls -G'
+  set first_ip=`ifconfig | sed -e '/127\.0\.0\.1/d' | awk '/inet .* netmask/{print $2}' | sed 1q | sed -n '1,1p'`
+endif
+
+if ( $?prompt ) then
+  set ip_str='N/A'
+  if ( $?first_ip ) then
+     set ip_str=${first_ip}
+ endif
+endif
+
+## colors
+set cyan="%{\033[1;36m%}"
+set blue="%{\033[1;34m%}"
+set pink="%{\033[1;31m%}"
+set green="%{\033[0;32m%}"
+set white="%{\033[1;37m%}"
+set purple="%{\033[1;35m%}"
+set default="%{\033[0m%}"
+set prompt="${pink}%T ${cyan}%n${default}@${white}%M${blue}($ip_str)${green}[%~]${default} %# "
+
